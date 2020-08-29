@@ -5,20 +5,20 @@
     <!-- Webpage Title -->
     <title>캣푸드 DB 프로젝트</title>
 
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
-          crossorigin="anonymous">
 
     <!-- JS -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
             integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
             crossorigin="anonymous"></script>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+          integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- 구글폰트 -->
     <link href="https://fonts.googleapis.com/css?family=Do+Hyeon&display=swap" rel="stylesheet">
@@ -39,25 +39,78 @@
                     let dbList = response["catFoods"];
                     for (let i = 0; i < dbList.length; i++) {
                         console.log(dbList[i])
-                        makeCard(dbList[i]["image"], dbList[i]["name"], dbList[i]["protein"], dbList[i]["fat"], dbList[i]["carb"], dbList[i]["ing"])
+                        makeCard(dbList[i]["image"], dbList[i]["name"], dbList[i]["protein"], dbList[i]["fat"], dbList[i]["carb"])
                     }
                 }
             })
         }
 
-        function makeCard(image, name, protein, fat, carb, ing) {
+        function makeCard(image, name, protein, fat, carb) {
             let temp_card =
-                `<div class="card" style="width: 14rem;">
+                `<div id="card">
+<div class="row">
+<div class="col-xs-6 col-sm-3">
                 <img class="card-img-top" src="http://catfooddb.com${image}" alt="Card image cap">
-                <div class="card-body">
+                <p class="card-body">
                     <p class="card-text">${name}</p>
-                    <p class="card-text">${protein}</p>
-                    <p class="card-text">${fat}</p>
-                    <p class="card-text">${carb}</p>
-                    <p class="card-text">${ing}</p>
-                </div>`;
+                    <p class="card-text">단백질: ${Math.round(protein)}</p>
+                    <p class="card-text">지방: ${Math.round(fat)}</p>
+                    <p class="card-text">탄수화물: ${Math.round(carb)}</p>
+                </p>
+</div>
+</div>
+</div>`;
             $('#card').append(temp_card);
         }
+
+
+        function carbList() {
+            $.ajax({
+                type: "GET",
+                url: "/catfood",
+                data: {},
+                success: function (response) {
+                    let dbList = response["catFoods"];
+                    for (let i = 0; i < dbList.length; i++) {
+                        if ("carb" <= 40) {
+                            console.log(dbList[i])
+                            makeCard_alt(dbList[i]["image"], dbList[i]["name"], dbList[i]["protein"], dbList[i]["fat"], dbList[i]["carb"])
+                        }
+                    }
+                }
+            })
+        }
+
+        function makeCard_alt(image, name, protein, fat, carb) {
+            let temp_card2 =
+                `<div id="card">
+<div class="row">
+<div class="col-xs-6 col-sm-3">
+                <img class="card-img-top" src="http://catfooddb.com${image}" alt="Card image cap">
+                <p class="card-body">
+                    <p class="card-text">${name}</p>
+                    <p class="card-text">단백질: ${Math.round(protein)}</p>
+                    <p class="card-text">지방: ${Math.round(fat)}</p>
+                    <p class="card-text">탄수화물: ${Math.round(carb)}</p>
+                </p>
+</div>
+</div>
+</div>`;
+            $('#card').append(temp_card2);
+        }
+
+
+        $(document).ready(function () {
+            $("#customCheck1").change(function () {
+                if ($("#customCheck1").is(":checked")) {
+                    $('#card').empty();
+                    carbList();
+                } else {
+                    showList();
+                }
+            });
+        });
+
 
     </script>
 
@@ -66,13 +119,39 @@
             font-family: "Do Hyeon", sans-serif;
         }
 
-        h1{
+        h1 {
             display: inline;
         }
 
         .info {
             margin-top: 20px;
             margin-bottom: 20px;
+        }
+
+        @media (min-width: 34em) {
+            #card {
+                -webkit-column-count: 3;
+                -moz-column-count: 3;
+                column-count: 3;
+            }
+        }
+
+        #card {
+            border-style: solid;
+            border-color: paleturquoise;
+            background-color: lightcyan;
+        }
+
+        .card-text {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            width: 100px;
+            height: 20px;
+        }
+
+        .container {
+            background-color: aliceblue;
         }
 
     </style>
@@ -87,10 +166,20 @@
         <p>설명을 넣을거예요</p>
 
     </div>
-    <div id="card" style="width: 14rem;">
-        <img class="card-img-top" src="..." alt="Card image cap">
-        <div class="card-body">
-            <p class="card-text">asdf</p>
+
+    <div class="custom-control custom-checkbox">
+        <input type="checkbox" class="custom-control-input" id="customCheck1">
+        <label class="custom-control-label" for="customCheck1">그레인프리</label>
+    </div>
+
+
+    <div id="card">
+        <div class="row">
+            <div class="col-xs-6 col-sm-3">
+                <img class="card-img-top" src="" alt="">
+                <p class="card-body">
+                </p>
+            </div>
         </div>
     </div>
 </div>
